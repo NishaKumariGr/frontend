@@ -26,7 +26,7 @@ class command_Line_Interact(cmd.Cmd):
         Insert = "INSERT INTO `{0}` (`FirstName`,`LastName`,`MiddleName`,`EmailAddress`,`MailingAddress`, `Affiliation`) VALUES (\"{1}\",\"{2}\",NULL,\"{3}\",\"{4}\",NULL);".format(table,firstname,lastname,email,address)
         print (Insert)
         self.cursor.execute(Insert)
-        self.conn.commit()
+        self.con.commit()
         self.cursor.execute(QUERY)
         print("Query executed: '{0}'\n\nResults:".format(QUERY))
 
@@ -38,16 +38,18 @@ class command_Line_Interact(cmd.Cmd):
         for row in cursor:
           print("".join(["{:<12}".format(col) for col in row]))
     
-    def do_exit(self):
-        self.con.close()
+    def do_exit(self, line):
         self.cursor.close()
+        self.con.close()
+        return True
+        
 
     def do_EOF(self, line):
         return True
 
     def extract_cursor(self, cur, con):
       self.cursor = cur
-      self.conn = con
+      self.con = con
 
 
 
@@ -64,17 +66,6 @@ if __name__ == "__main__":
       cursor = con.cursor()
 
       # query db
-      cursor.execute(QUERY)
-      
-      print("Query executed: '{0}'\n\nResults:".format(QUERY))
-
-      # print table header
-      print("".join(["{:<12}".format(col) for col in cursor.column_names]))
-      print("--------------------------------------------")
-
-      # iterate through results
-      for row in cursor:
-         print("".join(["{:<12}".format(col) for col in row]))
 
       com_intr = command_Line_Interact()
       com_intr.extract_cursor(cursor, con)
