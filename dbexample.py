@@ -2,7 +2,7 @@ from __future__ import print_function        # make print a function
 import mysql.connector                       # mysql functionality
 import sys                                   # for misc errors
 import cmd                                   # for creating line-oriented command processors
-
+import shlex
 
 SERVER   = "sunapee.cs.dartmouth.edu"        # db server to connect to
 USERNAME = "f002bz6"                            # user to connect as
@@ -13,16 +13,30 @@ QUERY    = "SELECT * FROM MANUSCRIPT;"       # query statement
 class command_Line_Interact(cmd.Cmd):
     """Command processor"""
     
-    def do_greet(self, line):
-        print ("hello")
+    # 
+    def do_register(self, line):
+        print ("original"+line)
+        print ('TOKENS:')
+        table, firstname,lastname,email, address = shlex.shlex(line)
+        print (table)
+        print (firstname)
+        print (lastname)
+        print (email)
+        print (address)
+        Insert = "INSERT INTO `{0}` (`FirstName`,`LastName`,`MiddleName`,`EmailAddress`,`MailingAddress`, `Affiliation`) VALUES (\"{1}\",\"{2}\",NULL,\"{3}\",\"{4}\",NULL);".format(table,firstname,lastname,email,address)
+
     
     def do_EOF(self, line):
         return True
 
+    def extract_cursor(self, cur):
+      self.cursor=cur
+
+
 
 
 if __name__ == "__main__":
-   try:
+    try:
       # initialize db connection
       con = mysql.connector.connect(host=SERVER,user=USERNAME,password=PASSWORD,
                                     database=DATABASE)
@@ -49,15 +63,12 @@ if __name__ == "__main__":
       con.close()
       cursor.close()
 
-   except mysql.connector.Error as e:        # catch SQL errors
+    except mysql.connector.Error as e:        # catch SQL errors
       print("SQL Error: {0}".format(e.msg))
-   except:                                   # anything else
+    except:                                   # anything else
       print("Unexpected error: {0}".format(sys.exc_info()[0]))
    
-
-   command_Line_Interact().cmdloop()
-   # cleanup
-   #con.close()
-   #cursor.close()
-   
-   print("\nConnection terminated.", end='')
+    command_Line_Interact().extract_cursor(cursor)
+    command_Line_Interact().cmdloop()
+      
+    print("\nConnection terminated.", end='')
