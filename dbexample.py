@@ -10,6 +10,17 @@ PASSWORD = "quarpiz59."                            # user's password
 DATABASE = "f002bz6_db"                              # db to user
 QUERY    = "SELECT * FROM MANUSCRIPT;"       # query statement
 
+class HelloWorld(cmd.Cmd):
+    """Simple command processor example."""
+    
+    def do_greet(self, line):
+        print ("hello")
+    
+    def do_EOF(self, line):
+        return True
+
+
+
 if __name__ == "__main__":
    try:
       # initialize db connection
@@ -43,6 +54,8 @@ if __name__ == "__main__":
    except:                                   # anything else
       print("Unexpected error: {0}".format(sys.exc_info()[0]))
    
+
+   HelloWorld().cmdloop()
    # cleanup
    #con.close()
    #cursor.close()
