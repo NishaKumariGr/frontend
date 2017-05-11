@@ -17,11 +17,6 @@ class command_Line_Interact(cmd.Cmd):
     def do_register(self, line):
         tokens = shlex.split(line)
         print (tokens[0])
-        #print (firstname)
-        #print (lastname)
-        #print (email)
-        #print (address)
-
         if tokens[0] == "AUTHOR":
           Insert = "INSERT INTO `{0}` (`FirstName`,`LastName`,`MiddleName`,`EmailAddress`,`MailingAddress`, `Affiliation`) VALUES (\"{1}\",\"{2}\",NULL,\"{3}\",\"{4}\",NULL);".format(tokens[0],tokens[1],tokens[2],tokens[3],tokens[4])
         elif tokens[0] == "EDITOR":
