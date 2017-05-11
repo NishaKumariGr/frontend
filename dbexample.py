@@ -39,15 +39,14 @@ class command_Line_Interact(cmd.Cmd):
     def do_login(self, line):
       print("Welcome "+line)
       print("Here are your details:")
-
       if line[0]=="A":
-        table="AUTHOR"
+        self.table="AUTHOR"
         Select = "SELECT FirstName, LastName, MailingAddress FROM AUTHOR WHERE AuthorID = {0};".format(line[1:])
       elif line[0]=="E":
-        table="EDITOR"
+        self.table="EDITOR"
         Select = "SELECT FirstName, LastName FROM EDITOR WHERE EditorID = {0};".format(line[1:])
       elif line[0]=="R":
-        table="REVIEWER"
+        self.table="REVIEWER"
         Select = "SELECT FirstName, LastName FROM REVIEWER WHERE ReviewerID = {0};".format(line[1:])
 
       self.id= line[1:]
@@ -55,11 +54,14 @@ class command_Line_Interact(cmd.Cmd):
       self.cursor.execute(Select) 
       print_table_select(self.cursor)
 
-      print_options(table)
+      print_options(self.table)
 
 
-    def do_status (self, line):
-      man_report = "SELECT * FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE AuthorID = {0} AND AuthorPlace = 1);".format(self.id)
+    def do_STATUS (self, line):
+      if self.table == "AUTHOR":
+        man_report = "SELECT * FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE AuthorID = {0} AND AuthorPlace = 1);".format(self.id)
+      elif self.table == "EDITOR":
+        man_report = "SELECT * FROM MANUSCRIPT  where EDITOR_idEDITOR = {0} ORDER BY status, Number;".format(self.id)
       self.cursor.execute(man_report)
       print_table_select(self.cursor)
 
