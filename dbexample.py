@@ -73,8 +73,8 @@ class command_Line_Interact(cmd.Cmd):
         man_report = "SELECT * FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE AuthorID = {0} AND AuthorPlace = 1);".format(self.id)
       elif self.table == "EDITOR":
         man_report = "SELECT * FROM MANUSCRIPT  where EDITOR_idEDITOR = {0} ORDER BY status, Number;".format(self.id)
-      #elif self.table == "REVIEWER":
-
+      elif self.table == "REVIEWER":
+        man_report = "SELECT ManuscriptID, Status FROM MANUSCRIPT where ManuscriptID in (SELECT ManuscriptID FROM REVIEW WHERE REVIEWER_idREVIEWER = {0}) ;".format(self.id)
       self.cursor.execute(man_report)
       print_table_select(self.cursor)
 
