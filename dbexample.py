@@ -39,19 +39,28 @@ class command_Line_Interact(cmd.Cmd):
     def do_login(self, line):
       print("Welcome "+line)
       print("Here are your details:")
+      self.id= line[1:]
 
       if line[0]=="A":
         table="AUTHOR"
         Select = "SELECT FirstName, LastName, MailingAddress FROM AUTHOR WHERE AuthorID = {0};".format(line[1:])
+        man_report = "SELECT ManuscriptID, Status FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE AuthorID = {0} AND AuthorPlace = 1);".format(self.id)
+        self.cursor.execute(man_report)
+        print_table_select(self.cursor)
       elif line[0]=="E":
         table="EDITOR"
         Select = "SELECT FirstName, LastName FROM EDITOR WHERE EditorID = {0};".format(line[1:])
+        #man_report = "SELECT ManuscriptID, Status FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE EditorID = {0});".format(self.id)
+        #self.cursor.execute(man_report)
+        #print_table_select(self.cursor)
       elif line[0]=="R":
         table="REVIEWER"
         Select = "SELECT FirstName, LastName FROM REVIEWER WHERE ReviewerID = {0};".format(line[1:])
-
-      self.id= line[1:]
+        #man_report = "SELECT ManuscriptID, Status FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE ReviewerID = {0});".format(self.id)
+        #self.cursor.execute(man_report)
+        #print_table_select(self.cursor)
       
+
       self.cursor.execute(Select) 
       print_table_select(self.cursor)
 
@@ -59,7 +68,7 @@ class command_Line_Interact(cmd.Cmd):
 
 
     # hardcoding needs to be removed and it needs ot be put in the inner loop after login - comman name also needs ot be changed!
-    def do_statusauthor (self, line):
+    def do_STATUS (self, line):
       man_report = "SELECT * FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE AuthorID = 2 AND AuthorPlace = 1);"
       self.cursor.execute(man_report)
       print_table_select(self.cursor)
@@ -76,7 +85,15 @@ class command_Line_Interact(cmd.Cmd):
       self.cursor = cur
       self.con = con
 
-# printing the table
+    def do_RETRACT(self,line):
+      response = raw_input ("Are you sure? (yes/no) \n")
+
+      if response=="yes":
+          Delete = "DELETE FROM MANUSCRIPT WHERE ManuscriptID = {0});".format(line)
+          print("Manuscript "+line+" is deleted from the system!")
+
+
+    # printing the table
 def print_table(table_name, cursor):
       QUERY = "SELECT * FROM " + table_name + ";"
       cursor.execute(QUERY)
