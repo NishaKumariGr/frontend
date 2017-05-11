@@ -50,14 +50,17 @@ class command_Line_Interact(cmd.Cmd):
         self.table="REVIEWER"
         Select = "SELECT FirstName, LastName FROM REVIEWER WHERE ReviewerID = {0};".format(line[1:])
 
-
-      self.cursor.execute(Select)
-      self.con.commit()    
-      
+      self.cursor.execute(Select) 
       print_table_select(self.cursor)
 
       print_options(self.table)
 
+
+    # hardcoding needs to be removed and it needs ot be put in the inner loop after login - comman name also needs ot be changed!
+    def do_statusauthor (self, line):
+      man_report = "SELECT * FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE AuthorID = 2 AND AuthorPlace = 1);"
+      self.cursor.execute(man_report)
+      print_table_select(self.cursor)
 
     def do_exit(self, line):
         self.cursor.close()
