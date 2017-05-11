@@ -13,7 +13,6 @@ DATABASE = "f002bz6_db"                              # db to user
 class command_Line_Interact(cmd.Cmd):
     """Command processor"""
     
-    # 
     def do_register(self, line):
         tokens = shlex.split(line)
         print (tokens[0])
@@ -24,11 +23,11 @@ class command_Line_Interact(cmd.Cmd):
         elif tokens[0] == "REVIEWER":
           lenOfList=len(tokens)
           if lenOfList==3:
-            Insert = "INSERT INTO `{0}` (FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",NULL,NULL,\"{3}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[2])
+            Insert = "INSERT INTO `{0}` (`FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",NULL,NULL,\"{3}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[2])
           elif lenOfList==4:
-            Insert = "INSERT INTO `{0}` (FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",\"{3}\",NULL,\"{4}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[4],tokens[2])
+            Insert = "INSERT INTO `{0}` (`FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",\"{3}\",NULL,\"{4}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[4],tokens[2])
           elif lenOfList==5:
-            Insert = "INSERT INTO `{0}` (FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",\"{3}\",\"{4}\",\"{5}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[4],tokens[5],tokens[2])
+            Insert = "INSERT INTO `{0}` (`FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",\"{3}\",\"{4}\",\"{5}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[4],tokens[5],tokens[2])
 
 
         print (Insert)
@@ -36,6 +35,30 @@ class command_Line_Interact(cmd.Cmd):
         self.cursor.execute(Insert)
         self.con.commit()        
         print_table(tokens[0], self.cursor)
+
+    def do_login(self, line):
+      print("Welcome "+line)
+      print("Here are your details:")
+
+      if line[0]=="A":
+        table="AUTHOR"
+        Select = "SELECT FirstName, LastName, MailingAddress FROM AUTHOR WHERE AuthorID = {0};".format(line[1:])
+      elif line[0]=="E":
+        table="EDITOR"
+        Select = "SELECT FirstName, LastName FROM EDITOR WHERE EditorID = {0};".format(line[1:])
+      elif line[0]=="R":
+        table="REVIEWER"
+        Select = "SELECT FirstName, LastName FROM REVIEWER WHERE ReviewerID = {0};".format(line[1:])
+
+
+      self.cursor.execute(Select)
+      self.con.commit()    
+      
+      print_table_select(self.cursor)
+
+      #print_table(table, self.cursor)
+
+
 
     def do_exit(self, line):
         self.cursor.close()
@@ -64,6 +87,15 @@ def print_table(table_name, cursor):
       for row in cursor:
         print("".join(["{:<12}".format(col) for col in row]))
 
+def print_table_select(cursor):
+      print("".join(["{:<12}".format(col) for col in cursor.column_names]))
+      print("--------------------------------------------")
+
+      # iterate through results
+      for row in cursor:
+        print("".join(["{:<12}".format(col) for col in row]))
+
+
 if __name__ == "__main__":
     try:
       # initialize db connection
@@ -73,7 +105,7 @@ if __name__ == "__main__":
       print("Connection established.")
       
       # initialize a cursor
-      cursor = con.cursor()
+      cursor = con.cursor(buffered=True)
       com_intr = command_Line_Interact()
       com_intr.extract_cursor(cursor, con)
       com_intr.cmdloop()
