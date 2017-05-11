@@ -90,8 +90,15 @@ class command_Line_Interact(cmd.Cmd):
       self.cursor = cur
       self.con = con
 
-    def do_RESIGN(self,line)
-      print ("Welcome"+LINE)
+    def do_RESIGN(self,line):
+      print ("Welcome "+line)
+      Resign_ReviewerReview="DELETE FROM REVIEW WHERE REVIEWER_idREVIEWER = {0};".format(line[1:])
+      Resign_Reviewer="DELETE FROM REVIEWER WHERE ReviewerID ={0};".format(line[1:])
+      self.cursor.execute(Resign_ReviewerReview)
+      self.con.commit()
+      self.cursor.execute(Resign_Reviewer)
+      self.con.commit()
+      print ("Thank you for your service")
 
     def do_RETRACT(self,line):
       response = raw_input ("Are you sure? (yes/no) \n")
