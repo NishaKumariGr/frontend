@@ -90,11 +90,26 @@ class command_Line_Interact(cmd.Cmd):
       self.cursor = cur
       self.con = con
 
+    def do_RESIGN(self,line)
+      print ("Welcome"+LINE)
+
     def do_RETRACT(self,line):
       response = raw_input ("Are you sure? (yes/no) \n")
 
+      print (line)
+
       if response=="yes":
-          Delete = "DELETE FROM MANUSCRIPT WHERE ManuscriptID = {0});".format(line)
+          Delete_man_in_issue="DELETE FROM Manuscripts_In_Issue WHERE ManuscriptID = {0};".format(line)
+          Delete_authorinInManuscript = "DELETE FROM AUTHORSINMANUSCRIPT WHERE ManuscriptID = {0};".format(line)
+          Delete_review = "DELETE FROM REVIEW WHERE ManuscriptID = {0};".format(line)
+          Delete = "DELETE FROM MANUSCRIPT WHERE ManuscriptID = {0};".format(line)
+          print (Delete_man_in_issue, Delete_authorinInManuscript, Delete_review, Delete)
+          self.cursor.execute(Delete_man_in_issue)
+          self.con.commit()
+          self.cursor.execute(Delete_authorinInManuscript)
+          self.con.commit()
+          self.cursor.execute(Delete_review)
+          self.con.commit()
           self.cursor.execute(Delete)
           self.con.commit()
           print("Manuscript "+line+" is deleted from the system!")
