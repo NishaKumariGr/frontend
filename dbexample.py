@@ -67,9 +67,9 @@ class command_Line_Interact(cmd.Cmd):
       print_options(table)
 
 
-    # hardcoding needs to be removed and it needs ot be put in the inner loop after login - comman name also needs ot be changed!
-    def do_STATUS (self, line):
-      man_report = "SELECT * FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE AuthorID = 2 AND AuthorPlace = 1);"
+
+    def do_status (self, line):
+      man_report = "SELECT * FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE AuthorID = {0} AND AuthorPlace = 1);".format(self.id)
       self.cursor.execute(man_report)
       print_table_select(self.cursor)
 
