@@ -41,13 +41,13 @@ class command_Line_Interact(cmd.Cmd):
       print("Here are your details:")
 
       if line[0]=="A":
-        table="AUTHOR"
+        self.table="AUTHOR"
         Select = "SELECT FirstName, LastName, MailingAddress FROM AUTHOR WHERE AuthorID = {0};".format(line[1:])
       elif line[0]=="E":
-        table="EDITOR"
+        self.table="EDITOR"
         Select = "SELECT FirstName, LastName FROM EDITOR WHERE EditorID = {0};".format(line[1:])
       elif line[0]=="R":
-        table="REVIEWER"
+        self.table="REVIEWER"
         Select = "SELECT FirstName, LastName FROM REVIEWER WHERE ReviewerID = {0};".format(line[1:])
 
 
@@ -56,16 +56,14 @@ class command_Line_Interact(cmd.Cmd):
       
       print_table_select(self.cursor)
 
-      #print_table(table, self.cursor)
-
+      print_options(self.table)
 
 
     def do_exit(self, line):
         self.cursor.close()
         self.con.close()
         return True
-        
-
+      
     def do_EOF(self, line):
         return True
 
@@ -94,6 +92,18 @@ def print_table_select(cursor):
       # iterate through results
       for row in cursor:
         print("".join(["{:<12}".format(col) for col in row]))
+
+def print_options(table):
+      print("\n*****************************")
+      print ("What do you wish to to today?")
+      print("\n*****************************")
+
+      if table=="AUTHOR":
+        print ("\n 1. submit\n 2. STATUS\n 3. RETRACT")
+      elif table=="EDITOR":
+        print ("\n 1. status\n 2. assign\n 3. reject\n 4. accept\n 5. typeset\n 6. schedule\n 7. publish")
+      elif table=="REVIEWER":
+        print ("\n 1. REVIEW-REJECT\n 2. REVIEW-REJECT")
 
 
 if __name__ == "__main__":
