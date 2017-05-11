@@ -41,19 +41,21 @@ class command_Line_Interact(cmd.Cmd):
       print("Here are your details:")
 
       if line[0]=="A":
-        self.table="AUTHOR"
+        table="AUTHOR"
         Select = "SELECT FirstName, LastName, MailingAddress FROM AUTHOR WHERE AuthorID = {0};".format(line[1:])
       elif line[0]=="E":
-        self.table="EDITOR"
+        table="EDITOR"
         Select = "SELECT FirstName, LastName FROM EDITOR WHERE EditorID = {0};".format(line[1:])
       elif line[0]=="R":
-        self.table="REVIEWER"
+        table="REVIEWER"
         Select = "SELECT FirstName, LastName FROM REVIEWER WHERE ReviewerID = {0};".format(line[1:])
 
+      self.id= line[1:]
+      
       self.cursor.execute(Select) 
       print_table_select(self.cursor)
 
-      print_options(self.table)
+      print_options(table)
 
 
     # hardcoding needs to be removed and it needs ot be put in the inner loop after login - comman name also needs ot be changed!
