@@ -73,6 +73,8 @@ class command_Line_Interact(cmd.Cmd):
         man_report = "SELECT * FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE AuthorID = {0} AND AuthorPlace = 1);".format(self.id)
       elif self.table == "EDITOR":
         man_report = "SELECT * FROM MANUSCRIPT  where EDITOR_idEDITOR = {0} ORDER BY status, Number;".format(self.id)
+      #elif self.table == "REVIEWER":
+
       self.cursor.execute(man_report)
       print_table_select(self.cursor)
 
@@ -93,6 +95,8 @@ class command_Line_Interact(cmd.Cmd):
 
       if response=="yes":
           Delete = "DELETE FROM MANUSCRIPT WHERE ManuscriptID = {0});".format(line)
+          self.cursor.execute(Delete)
+          self.con.commit()
           print("Manuscript "+line+" is deleted from the system!")
 
 
