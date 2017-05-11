@@ -24,11 +24,11 @@ class command_Line_Interact(cmd.Cmd):
         elif tokens[0] == "REVIEWER":
           lenOfList=len(tokens)
           if lenOfList==3:
-            Insert = "INSERT INTO `{0}` (FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",NULL,NULL,\"{3}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[2])
+            Insert = "INSERT INTO `{0}` (`FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",NULL,NULL,\"{3}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[2])
           elif lenOfList==4:
-            Insert = "INSERT INTO `{0}` (FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",\"{3}\",NULL,\"{4}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[4],tokens[2])
+            Insert = "INSERT INTO `{0}` (`FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",\"{3}\",NULL,\"{4}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[4],tokens[2])
           elif lenOfList==5:
-            Insert = "INSERT INTO `{0}` (FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",\"{3}\",\"{4}\",\"{5}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[4],tokens[5],tokens[2])
+            Insert = "INSERT INTO `{0}` (`FirstName`,`EmailId`,`Affiliation`,`RICode1`,`RICode2`,`RICode3`,`LastName`,`MiddleName`) VALUES (\"{1}\",NULL,NULL,\"{2}\",\"{3}\",\"{4}\",\"{5}\",NULL);".format(tokens[0],tokens[1],tokens[3],tokens[4],tokens[5],tokens[2])
 
 
         print (Insert)
