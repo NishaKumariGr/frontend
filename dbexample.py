@@ -51,15 +51,15 @@ class command_Line_Interact(cmd.Cmd):
       elif line[0]=="E":
         self.table="EDITOR"
         Select = "SELECT FirstName, LastName FROM EDITOR WHERE EditorID = {0};".format(line[1:])
-        #man_report = "SELECT ManuscriptID, Status FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE EditorID = {0});".format(self.id)
-        #self.cursor.execute(man_report)
-        #print_table_select(self.cursor)
+        man_report = "SELECT * FROM MANUSCRIPT  where EDITOR_idEDITOR = {0} ORDER BY status, Number;".format(self.id)
+        self.cursor.execute(man_report)
+        print_table_select(self.cursor)
       elif line[0]=="R":
         self.table="REVIEWER"
         Select = "SELECT FirstName, LastName FROM REVIEWER WHERE ReviewerID = {0};".format(line[1:])
-        #man_report = "SELECT ManuscriptID, Status FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE ReviewerID = {0});".format(self.id)
-        #self.cursor.execute(man_report)
-        #print_table_select(self.cursor)
+        man_report = "SELECT ManuscriptID, Status FROM MANUSCRIPT where ManuscriptID in (SELECT ManuscriptID FROM REVIEW WHERE REVIEWER_idREVIEWER = {0}) ;".format(self.id)
+        self.cursor.execute(man_report)
+        print_table_select(self.cursor)
       
 
       self.cursor.execute(Select) 
@@ -128,6 +128,30 @@ class command_Line_Interact(cmd.Cmd):
       self.cursor.execute(Resign_Reviewer)
       self.con.commit()
       print ("Thank you for your service")
+
+    def do_REVIEWREJECT(self,line):
+      tokens = shlex.split(line)
+      set_issue="UPDATE REVIEW SET PublicationRecommendation='{0}',Clarity='{1}',Methodology='{2}',Contribution='{3}',Appropriateness='{4}' WHERE ManuscriptID={1};".format("Reject",tokens[1],tokens[2],tokens[3],tokens[4])
+      set_manuscript="UPDATE MANUSCRIPT SET Status='{0}' WHERE ManuscriptID={1};".format("Rejected",tokens[1])
+      print (set_issue)
+      print (set_manuscript)
+      self.cursor.execute(set_issue)
+      self.con.commit()
+      self.cursor.execute(set_manuscript)
+      self.con.commit()
+      print ("updated!")
+
+    def do_REVIEWACCEPT(self,line):
+      tokens = shlex.split(line)
+      set_issue="UPDATE REVIEW SET PublicationRecommendation='{0}',Clarity='{1}',Methodology='{2}',Contribution='{3}',Appropriateness='{4}' WHERE ManuscriptID={5};".format("Accept",tokens[1],tokens[2],tokens[3],tokens[4],tokens[0])
+      set_manuscript="UPDATE MANUSCRIPT SET Status='{0}' WHERE ManuscriptID={1};".format("Accepted",tokens[0])
+      print (set_issue)
+      print (set_manuscript)
+      self.cursor.execute(set_issue)
+      self.con.commit()
+      self.cursor.execute(set_manuscript)
+      self.con.commit()
+      print("updated in REVIEW ACCEPT")
 
     def do_RETRACT(self,line):
       response = raw_input ("Are you sure? (yes/no) \n")
