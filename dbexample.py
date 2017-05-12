@@ -102,27 +102,44 @@ class command_Line_Interact(cmd.Cmd):
 
     def do_REVIEWREJECT(self,line):
       tokens = shlex.split(line)
-      set_issue="UPDATE REVIEW SET PublicationRecommendation='{0}',Clarity='{1}',Methodology='{2}',Contribution='{3}',Appropriateness='{4}' WHERE ManuscriptID={1};".format("Reject",tokens[1],tokens[2],tokens[3],tokens[4])
-      set_manuscript="UPDATE MANUSCRIPT SET Status='{0}' WHERE ManuscriptID={1};".format("Rejected",tokens[1])
+      set_issue="UPDATE REVIEW SET PublicationRecommendation='{0}',Clarity='{1}',Methodology='{2}',Contribution='{3}',Appropriateness='{4}' WHERE ManuscriptID={5} AND REVIEWER_idREVIEWER={6};".format("Reject",tokens[1],tokens[2],tokens[3],tokens[4],tokens[0],self.id)
+      set_manuscript="UPDATE MANUSCRIPT SET Status='{0}' WHERE ManuscriptID={1} AND Status='{2}';".format("Rejected",tokens[1],"Under review")
+
       print (set_issue)
       print (set_manuscript)
       self.cursor.execute(set_issue)
+      count_issue=cursor.rowcount
       self.con.commit()
       self.cursor.execute(set_manuscript)
+      count_manuscript=cursor.rowcount
+      print(count_issue,count_manuscript)
       self.con.commit()
-      print ("updated!")
+
+      # If no rows were affected by the operations performed
+      if count_issue<=0 and count_manuscript<=0:
+        print("Sorry! Operation cannot be performed. There is not enough suitable data present")
+      else:
+        print ("updated!")
 
     def do_REVIEWACCEPT(self,line):
       tokens = shlex.split(line)
-      set_issue="UPDATE REVIEW SET PublicationRecommendation='{0}',Clarity='{1}',Methodology='{2}',Contribution='{3}',Appropriateness='{4}' WHERE ManuscriptID={5};".format("Accept",tokens[1],tokens[2],tokens[3],tokens[4],tokens[0])
-      set_manuscript="UPDATE MANUSCRIPT SET Status='{0}' WHERE ManuscriptID={1};".format("Accepted",tokens[0])
-      print (set_issue)
-      print (set_manuscript)
+      set_issue="UPDATE REVIEW SET PublicationRecommendation='{0}',Clarity='{1}',Methodology='{2}',Contribution='{3}',Appropriateness='{4}' WHERE ManuscriptID={5} AND REVIEWER_idREVIEWER={6};".format("Accept",tokens[1],tokens[2],tokens[3],tokens[4],tokens[0],self.id)
+      set_manuscript="UPDATE MANUSCRIPT SET Status='{0}' WHERE ManuscriptID={1} AND Status='{2}';".format("Accepted",tokens[0],"Under Review")
+      #print (set_issue)
+      #print (set_manuscript)
       self.cursor.execute(set_issue)
+      count_issue=cursor.rowcount
       self.con.commit()
       self.cursor.execute(set_manuscript)
+      count_manuscript=cursor.rowcount
+      print(count_issue,count_manuscript)
       self.con.commit()
-      print("updated in REVIEW ACCEPT")
+
+       # If no rows were affected by the operations performed
+      if count_issue<=0 and count_manuscript<=0:
+        print("Sorry! Operation cannot be performed. There is not enough suitable data present")
+      else:
+        print ("Updated in REVIEW ACCEPT!")
 
     def do_RETRACT(self,line):
       response = raw_input ("Are you sure? (yes/no) \n")
@@ -178,7 +195,7 @@ def print_options(table):
       elif table=="EDITOR":
         print ("\n 1. status\n 2. assign\n 3. reject\n 4. accept\n 5. typeset\n 6. schedule\n 7. publish")
       elif table=="REVIEWER":
-        print ("\n 1. REVIEW-REJECT\n 2. REVIEW-REJECT")
+        print ("\n 1. REVIEWREJECT\n 2. REVIEWACCEPT")
 
 
 if __name__ == "__main__":
