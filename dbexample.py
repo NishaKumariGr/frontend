@@ -72,11 +72,40 @@ class command_Line_Interact(cmd.Cmd):
       if self.table == "AUTHOR":
         man_report = "SELECT * FROM MANUSCRIPT where ManuscriptID IN (SELECT ManuscriptID FROM AUTHORSINMANUSCRIPT WHERE AuthorID = {0} AND AuthorPlace = 1);".format(self.id)
       elif self.table == "EDITOR":
-        man_report = "SELECT * FROM MANUSCRIPT  where EDITOR_idEDITOR = {0} ORDER BY status, Number;".format(self.id)
+        man_report = "SELECT * FROM MANUSCRIPT  where EDITOR_idEDITOR = {0} ORDER BY status, ManuscriptID;".format(self.id)
       elif self.table == "REVIEWER":
         man_report = "SELECT ManuscriptID, Status FROM MANUSCRIPT where ManuscriptID in (SELECT ManuscriptID FROM REVIEW WHERE REVIEWER_idREVIEWER = {0}) ;".format(self.id)
       self.cursor.execute(man_report)
       print_table_select(self.cursor)
+
+    def do_submit(self,line):
+        tokens = shlex.split(line)
+        title = tokens[0]
+        Affiliation = tokens[1]
+        RICode = tokens[2]
+        sec_authors = tokens[3:-1] 
+        filename = tokens[-1]
+        submission = "INSERT INTO MANUSCRIPT (`RICode`,`EDITOR_idEDITOR`,`Title`, `Status`,`FileBlob`, `Pages`, `AcceptanceDate`, `IssueYear`, `IssueVolume`) VALUES (\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\", NULL, NULL, NULL, NULL);".format(RICode, 1, title, "Received", filename)
+        self.cursor.execute(submission)
+        self.con.commit()
+        man_id = self.cursor.lastrowid
+        msg = "Manuscript has been submitted in the system! The ID of the new Manuscript is: {0}".format(self.cursor.lastrowid)
+        print(msg) 
+        affil_update = "UPDATE AUTHOR SET Affiliation = '{0}' WHERE AuthorID = {1};".format(Affiliation,self.id)
+        self.cursor.execute(affil_update)
+        self.con.commit()
+        a_rank = 2
+        auth_man = "INSERT INTO AUTHORSINMANUSCRIPT (`ManuscriptID`, `AuthorID`, `AuthorPlace`) VALUES (\"{0}\",\"{1}\",\"{2}\");".format(man_id, self.id, 1)
+        self.cursor.execute(auth_man)
+        self.con.commit()
+        for auth in sec_authors:
+          auth_man = "INSERT INTO AUTHORSINMANUSCRIPT (`ManuscriptID`, `AuthorID`, `AuthorPlace`) VALUES (\"{0}\",\"{1}\",\"{2}\");".format(man_id, auth, a_rank)
+          a_rank += 1
+          self.cursor.execute(auth_man)
+          self.con.commit()
+
+
+    
 
     def do_exit(self, line):
         self.cursor.close()
