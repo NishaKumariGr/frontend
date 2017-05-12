@@ -51,7 +51,7 @@ class command_Line_Interact(cmd.Cmd):
       elif line[0]=="E":
         self.table="EDITOR"
         Select = "SELECT FirstName, LastName FROM EDITOR WHERE EditorID = {0};".format(line[1:])
-        man_report = "SELECT * FROM MANUSCRIPT  where EDITOR_idEDITOR = {0} ORDER BY status, Number;".format(self.id)
+        man_report = "SELECT * FROM MANUSCRIPT  where EDITOR_idEDITOR = {0} ORDER BY status, ManuscriptID;".format(self.id)
         self.cursor.execute(man_report)
         print_table_select(self.cursor)
       elif line[0]=="R":
@@ -161,7 +161,6 @@ class command_Line_Interact(cmd.Cmd):
       self.con.commit()
       self.cursor.execute(set_manuscript)
       count_manuscript=cursor.rowcount
-      print(count_issue,count_manuscript)
       self.con.commit()
 
        # If no rows were affected by the operations performed
@@ -169,6 +168,27 @@ class command_Line_Interact(cmd.Cmd):
         print("Sorry! Operation cannot be performed. There is not enough suitable data present")
       else:
         print ("Updated in REVIEW ACCEPT!")
+
+    # Sets the  manuscript's status to "Rejected" with a timestamp
+    def do_reject(self,line):
+      tokens = shlex.split(line)
+      manuscriptId_Rejected=tokens[0]
+      editor_reject="UPDATE MANUSCRIPT SET Status='{0}' WHERE ManuscriptID={1} AND EDITOR_idEDITOR={2};".format("Rejected",manuscriptId_Rejected,self.id)
+      print (editor_reject)
+      self.cursor.execute(editor_reject)
+      self.con.commit()
+      print("Manuscript",manuscriptId_Rejected,"status set to \"Rejected\" ")
+       
+
+    # Sets the  manuscript's status to "Accepted" with a timestamp
+    def do_accept(self,line):
+      tokens = shlex.split(line)
+      manuscriptId_Accepted=tokens[0]
+      editor_accept="UPDATE MANUSCRIPT SET Status='{0}' WHERE ManuscriptID={1} AND EDITOR_idEDITOR={2};".format("Accepted",manuscriptId_Accepted,self.id)
+      print (editor_accept)
+      self.cursor.execute(editor_accept)
+      self.con.commit()
+      print("Manuscript",manuscriptId_Accepted,"status set to \"Accepted\" ")    
 
     def do_RETRACT(self,line):
       response = raw_input ("Are you sure? (yes/no) \n")
